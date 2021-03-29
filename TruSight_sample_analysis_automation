@@ -1,0 +1,200 @@
+
+
+## Steps to run this script for beginners to coding. ##
+
+# 1) To run the script you need to input your username/email, password, and setup the csv file. Use the excel file "Data_with_headers.xlsx" as a guide of where to put your data fields, but then use the data.csv file to actually put your data so that it is used within the script.
+# 2) If you have not already installed selenium, webdriver, chromedriver, and playsound remove the "#" from the below statements. Ex: "#pip install selenium".
+# 3) You will also need to download Chromedriver if you have not already done so. You can get it here - https://chromedriver.chromium.org/downloads make sure it matches the version of Google Chrome you use.
+# 4) After downloading the Chromedrive move it to this file. The file name should be "chromedriver.exe".
+
+
+#---------------------------------------------------------------------------------
+
+#pip install selenium
+#pip install webdriver (only of not installed)
+#pip install playsound
+
+
+# ----------------------------------------------------------------------------------
+
+import csv
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
+from playsound import playsound
+
+
+print("If you have questions or bug issues feel free to contact me through LinkedIN - https://www.linkedin.com/in/stefan-creadore/ or email screadore@aol.com I'll gladly help.")
+
+# ---------------------------------------------------------------------------------
+
+# Loading up TruSight and Logging into TruSight using users credentials.
+
+# Loading in the Chromedriver
+driver = webdriver = webdriver.Chrome('../chromedriver.exe')
+driver.maximize_window() # For maximizing window
+driver.implicitly_wait(20) # gives an implicit wait for 20 seconds needed for it to not give an error
+
+# Loads up the Trusight Illumina platform. ** Be sure to put the public domain or your own enterprise domain here. **
+driver.get('INSERT YOUR DOMAIN NAME FOR TRUSIGHT')
+
+
+# ---------------------------------------------------------------------------------
+
+# TruSight Username/email goes here
+
+Username = "INSERT YOUR EMAIL"
+user = driver.find_element_by_xpath('/html/body/div/div[2]/div/div/div/div/div/div/div[3]/div/form/div[2]/div[1]/input')
+user.send_keys(Username)
+
+# TruSight Password goes here.
+Password = "INSERT YOUR PASSWORD"
+password = driver.find_element_by_xpath('/html/body/div/div[2]/div/div/div/div/div/div/div[3]/div/form/div[2]/div[2]/input')
+password.send_keys(Password)
+
+login_submit_button = driver.find_elements_by_xpath('/html/body/div/div[2]/div/div/div/div/div/div/div[3]/div/form/div[2]/div[4]/div[1]/input')[0]
+login_submit_button.click()
+driver.implicitly_wait(20) # gives an implicit wait for 20 seconds needed for it to not give an error
+
+
+# ---------------------------------------------------------------------------------
+
+# This clicks the create new case button on the TruSight Dashboard.
+create_new_case_button = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-dashboard/div[2]/a/button')[0]
+create_new_case_button.click()
+driver.implicitly_wait(20) # gives an implicit wait for 20 seconds needed for it to not give an error
+
+
+# --------------------------------------------------------------------------------
+
+# Setup reading in CSV file. For each row it opens a new browser instance.
+
+with open('../TruSight_Automation_Tools/Input_Data/data.csv', 'r') as csv_file:
+
+    csv_reader = csv.reader(csv_file)
+# ---------------------------------------------------------------------------------
+
+# TruSight Run Annotation Analysis Automation - Begin
+
+# We loop for each line, which will be for each sample analysis.
+    for line in csv_reader:
+
+        driver.get('https://shriners.trusight.illumina.com/cmp/cases/create')
+
+        time.sleep(3)
+
+
+        # ----------------------------------------------------------------------------
+
+        # New Case ID Name input code.
+        newcaseid = driver.find_element_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[1]/div[1]/input')
+        newcaseid.clear()
+        newcaseid.send_keys(line[0])
+
+        # Clicks the dropdown selection and selects the test type of your choice.
+        click_test_button = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-details/div/form/div/div/button')[0]
+        click_test_button.click()
+        time.sleep(1)
+
+        click_test_button_dropdown = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-details/div/form/div/div/ul/li[1]/a/span[1]')[0]
+        click_test_button_dropdown.click()
+
+        # ----------------------------------------------------------------------------
+
+        # Selects the case managers for the analysis. You will want to change this for your particular preferences.
+        click_case_manager = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-details/div/form/div[2]/div/button')[0]
+        click_case_manager.click()
+        time.sleep(1)
+
+        click_case_manager_1 = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-details/div/form/div[2]/div/ul/li[1]/label/span')[0]
+        click_case_manager_1.click()
+        time.sleep(1)
+
+        click_case_manager_2 = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-details/div/form/div[2]/div/ul/div[1]/li/label')[0]
+        click_case_manager_2.click()
+        time.sleep(1)
+
+        click_case_manager_3 = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-details/div/form/div[2]/div/ul/div[3]/li/label/span')[0]
+        click_case_manager_3.click()
+        time.sleep(1)
+
+        click_case_manager_4 = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-details/div/form/div[2]/div/ul/div[4]/li/label/span')[0]
+        click_case_manager_4.click()
+        time.sleep(1)
+
+
+        # ----------------------------------------------------------------------------
+
+        # Selects the sex of the sample. Auto populates Male. Additional functionality for the actual sex is to be  added at a later date.
+        sex_select_dropdown = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-subject/div/form/div[1]/div[2]/div[1]/div/button')[0]
+        sex_select_dropdown.click()
+        time.sleep(1)
+
+        sex_select_dropdown_select_male = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-subject/div/form/div[1]/div[2]/div[1]/div/ul/li[1]/a')[0]
+        sex_select_dropdown_select_male.click()
+        time.sleep(1)
+
+
+        # ----------------------------------------------------------------------------
+
+        # Input of Proband (child) Sample_ID/Patient_ID
+        proband_id = driver.find_element_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-subject/div/form/div[3]/div[2]/div[1]/div/div[1]/div/app-sample-autocomplete/div/div/input')
+        proband_id.send_keys(line[1])
+        time.sleep(3)
+
+        select_dropdown_sampleid = driver.find_elements_by_xpath('/html/body/div/div/div/div/mat-option[2]/span/span[2]')[0]
+        select_dropdown_sampleid.click()
+        time.sleep(1)
+
+
+        # -----------------------------------------------------------------------------
+
+        # Selects for the sample type. For example Saliva, Blood, gDNA, etc. Default is Saliva.
+        sample_type_select_dropdown = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-subject/div/form/div[3]/div[2]/div[1]/div/div[2]/div/div/button')[0]
+        sample_type_select_dropdown.click()
+        time.sleep(1)
+
+        sample_type_dropdown_select_saliva = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-subject/div/form/div[3]/div[2]/div[1]/div/div[2]/div/div/ul/li[2]/a')[0]
+        sample_type_dropdown_select_saliva.click()
+        time.sleep(1)
+
+        # -----------------------------------------------------------------------------
+
+        # Input of Proband Indications from the CSV file from column 5. Note: The count from A1 to the right starts at 0 then goes to 1. Ex: A1 = 0, B1 = 1,
+
+        proband_indications = driver.find_element_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[2]/app-case-subject/div/form/div[1]/div[3]/div/app-autocomplete/div/div/div/input')
+        proband_indications.send_keys(line[5])
+        time.sleep(2)
+
+        # Makes the selection of an indication/condition/phenotype conditional so if there is no drop-down value present from the autocomplete it will not select one and then continue on to the next.
+        for column in csv_file[[line[5],line[6],line[7],line[8],line[9]]:
+            sample_click_indication_box = driver.find_element_by_xpath('//*[@id="subject-indications-1"]/div/div/input').click();
+            sample_click_indication_box.send_keys(column)
+
+            sample_select_indication = driver.find_element_by_xpath('//*[@id="subject-indications-1"]/div/div/input')
+            sample_select_indication.click()
+        else:
+
+        proband_indications_selection = driver.find_elements_by_partial_link_text('line[5]')[0]
+        proband_indications_selection.click()
+        time.sleep(2)
+
+        # -----------------------------------------------------------------------------
+
+        # Submit analysis button click
+        submit_analysis_button = driver.find_elements_by_xpath('/html/body/app-cmp/div/app-secured/app-case-create/div/form/div[1]/div[2]/div/button[3]')[0]
+        submit_analysis_button.click()
+        time.sleep(1)
+
+
+playsound('process_completed.mp3')
+time.sleep(3)
+
+print("All of your TruSight samples have been uploaded and are running. Have fun! - Stefan Giovanni Creadore")
+print("Author & Creator of this Script - Stefan Giovanni Creadore, M.S. Bioinformatics & Computational Biology - Bioinformatics Scientist")
+print("Free for personal use if used in a publication. Please cite me if this Script is useful for your research.")
+
+playsound('power_off.mp3')
